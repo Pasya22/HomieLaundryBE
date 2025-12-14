@@ -19,5 +19,7 @@
      //  Route::get('/process', ProcessIndex::class)->name('process.index');
      //  Route::get('/invoice/{order}', InvoicePrint::class)->name('invoice.print');
 
- // Add other routes as needed
-Route::get('/', fn () => 'OK FROM RAILWAY');
+     // Add other routes as needed
+     Route::get('/health', function () {
+         return 'OK';
+ });
