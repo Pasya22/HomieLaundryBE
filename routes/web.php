@@ -20,3 +20,4 @@
      //  Route::get('/invoice/{order}', InvoicePrint::class)->name('invoice.print');
 
  // Add other routes as needed
+Route::get('/', fn () => 'OK FROM RAILWAY');
