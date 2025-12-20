@@ -22,7 +22,7 @@ class DashboardController extends Controller
                 ->where('status', 'completed')
                 ->count(),
             'inProgress' => Order::whereDate('created_at', $today)
-                ->whereIn('status', ['process', 'washing', 'drying', 'ironing'])
+                ->whereIn('status', ['request', 'washing', 'drying', 'ironing', 'ready'])
                 ->count(),
         ];
 
@@ -39,7 +39,10 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return OrderResource::collection($orders);
+        return response()->json([
+            'success' => true,
+            'data' => OrderResource::collection($orders)
+        ]);
     }
 
     public function dashboardData(Request $request)
@@ -53,7 +56,7 @@ class DashboardController extends Controller
                 ->where('status', 'completed')
                 ->count(),
             'inProgress' => Order::whereDate('created_at', $today)
-                ->whereIn('status', ['process', 'washing', 'drying', 'ironing'])
+                ->whereIn('status', ['request', 'washing', 'drying', 'ironing', 'ready'])
                 ->count(),
         ];
 

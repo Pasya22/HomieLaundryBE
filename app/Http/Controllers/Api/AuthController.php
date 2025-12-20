@@ -1,5 +1,7 @@
 <?php
-// app/Http/Controllers/Api/AuthController.php
+// ============================================
+// FILE 1: app/Http/Controllers/Api/AuthController.php
+// ============================================
 
 namespace App\Http\Controllers\Api;
 
