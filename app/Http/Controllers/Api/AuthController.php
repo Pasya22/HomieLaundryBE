@@ -20,20 +20,20 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required|string',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors'  => $validator->errors(),
             ], 422);
         }
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Email atau password salah.'],
             ]);
@@ -43,19 +43,19 @@ class AuthController extends Controller
         $user->tokens()->delete();
 
         // Buat token baru
-        $token = $user->createToken('auth-token')->plainTextToken;
+        $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
             'success' => true,
             'message' => 'Login berhasil',
-            'data' => [
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
+            'data'    => [
+                'user'  => [
+                    'id'    => $user->id,
+                    'name'  => $user->name,
                     'email' => $user->email,
                 ],
-                'token' => $token
-            ]
+                'token' => $token,
+            ],
         ]);
     }
 
@@ -65,21 +65,21 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors'  => $validator->errors(),
             ], 422);
         }
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
@@ -88,14 +88,14 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Registrasi berhasil',
-            'data' => [
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
+            'data'    => [
+                'user'  => [
+                    'id'    => $user->id,
+                    'name'  => $user->name,
                     'email' => $user->email,
                 ],
-                'token' => $token
-            ]
+                'token' => $token,
+            ],
         ], 201);
     }
 
@@ -108,7 +108,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Logout berhasil'
+            'message' => 'Logout berhasil',
         ]);
     }
 
@@ -119,11 +119,11 @@ class AuthController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => [
-                'id' => $request->user()->id,
-                'name' => $request->user()->name,
+            'data'    => [
+                'id'    => $request->user()->id,
+                'name'  => $request->user()->name,
                 'email' => $request->user()->email,
-            ]
+            ],
         ]);
     }
 
@@ -133,16 +133,16 @@ class AuthController extends Controller
     public function updateProfile(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $request->user()->id,
+            'name'             => 'required|string|max:255',
+            'email'            => 'required|string|email|max:255|unique:users,email,' . $request->user()->id,
             'current_password' => 'required_with:new_password|string',
-            'new_password' => 'nullable|string|min:8|confirmed',
+            'new_password'     => 'nullable|string|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors'  => $validator->errors(),
             ], 422);
         }
 
@@ -150,27 +150,27 @@ class AuthController extends Controller
 
         // Jika ingin ganti password
         if ($request->filled('new_password')) {
-            if (!Hash::check($request->current_password, $user->password)) {
+            if (! Hash::check($request->current_password, $user->password)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Password saat ini salah'
+                    'message' => 'Password saat ini salah',
                 ], 422);
             }
             $user->password = Hash::make($request->new_password);
         }
 
-        $user->name = $request->name;
+        $user->name  = $request->name;
         $user->email = $request->email;
         $user->save();
 
         return response()->json([
             'success' => true,
             'message' => 'Profile berhasil diupdate',
-            'data' => [
-                'id' => $user->id,
-                'name' => $user->name,
+            'data'    => [
+                'id'    => $user->id,
+                'name'  => $user->name,
                 'email' => $user->email,
-            ]
+            ],
         ]);
     }
 }
