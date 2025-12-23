@@ -106,8 +106,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/', [ProcessController::class, 'index']);
         Route::patch('/{id}/status', [ProcessController::class, 'updateStatus']);
         Route::patch('/{id}/quick-update', [ProcessController::class, 'quickUpdate']);
-        Route::patch('/{id}/mark-ready', [ProcessController::class, 'markReady']);
-        Route::patch('/{id}/mark-completed', [ProcessController::class, 'markCompleted']);
+        Route::patch('/{id}/mark-ready', [ProcessController::class, 'markAsReady']);
+        Route::patch('/{id}/mark-completed', [ProcessController::class, 'markAsCompleted']);
     });
 });
 
