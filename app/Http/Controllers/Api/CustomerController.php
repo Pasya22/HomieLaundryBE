@@ -18,7 +18,7 @@ class CustomerController extends Controller
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->whereRaw('LOWER(name)', 'like', "%{$search}%")
+                $q->where('name', 'like', "%{$search}%")
                   ->orWhere('phone', 'like', "%{$search}%")
                   ->orWhere('address', 'like', "%{$search}%");
             });
