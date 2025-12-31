@@ -1,0 +1,464 @@
+[
+    {
+        "id": "mvmdb_lvmdb1_lightning-\u0026-socket-outlet_mfg2_electricity_consumption",
+        "v": 88827,
+        "q": true,
+        "t": 1766671015127,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_boiler3_electricity_consumption",
+        "v": 53911,
+        "q": true,
+        "t": 1766671015137,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_lightning-\u0026-socket-outlet_office_electricity_consumption",
+        "v": 20664,
+        "q": true,
+        "t": 1766671015141,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_F61_electricity_consumption",
+        "v": 38899,
+        "q": true,
+        "t": 1766671015157,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_F66_electricity_consumption",
+        "v": 374631,
+        "q": true,
+        "t": 1766671015167,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_F65_electricity_consumption",
+        "v": 223998,
+        "q": true,
+        "t": 1766671015177,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_F68_electricity_consumption",
+        "v": 132103,
+        "q": true,
+        "t": 1766671015187,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_F64_electricity_consumption",
+        "v": 444246,
+        "q": true,
+        "t": 1766671015197,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_F62_electricity_consumption",
+        "v": 48,
+        "q": true,
+        "t": 1766671015207,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_boiler1_electricity_consumption",
+        "v": 152166,
+        "q": true,
+        "t": 1766671015217,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_colling-tower_electricity_consumption",
+        "v": 76586,
+        "q": true,
+        "t": 1766671015227,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_ac_bmc_electricity_consumption",
+        "v": 474192,
+        "q": true,
+        "t": 1766671015237,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_ac_office_electricity_consumption",
+        "v": 50223,
+        "q": true,
+        "t": 1766671015247,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_ac_canteen_electricity_consumption",
+        "v": 19400,
+        "q": true,
+        "t": 1766671015257,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_boiler2_electricity_consumption",
+        "v": 50810,
+        "q": true,
+        "t": 1766671015267,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_lightning-\u0026-socket-outlet_mfg1-\u0026-delivery_electricity_consumption",
+        "v": 74270,
+        "q": true,
+        "t": 1766671015277,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_lightning-\u0026-socket_outlet_mushola_electricity_consumption",
+        "v": 112929,
+        "q": true,
+        "t": 1766671015287,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_fan-building_stamping_electricity_consumption",
+        "v": 99794,
+        "q": true,
+        "t": 1766671015297,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_F63_electricity_consumption",
+        "v": 407280,
+        "q": true,
+        "t": 1766671015307,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_F67_electricity_consumption",
+        "v": 366029,
+        "q": true,
+        "t": 1766671015317,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_prod-water-waste_electricity_consumption",
+        "v": 8324,
+        "q": true,
+        "t": 1766671015328,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_lightning-\u0026-socket-outlet_receiving_electricity_consumption",
+        "v": 57865,
+        "q": true,
+        "t": 1766671015337,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_boiler4_electricity_consumption",
+        "v": 45078,
+        "q": true,
+        "t": 1766671015348,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_utility_F60_electricity_consumption",
+        "v": 171159,
+        "q": true,
+        "t": 1766671015351,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_F73_electricity_consumption",
+        "v": 188490,
+        "q": true,
+        "t": 1766671015548,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_welding-line_F114_electricity_consumption",
+        "v": 6354,
+        "q": true,
+        "t": 1766671015558,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_anodizing_al-0100_electricity_consumption",
+        "v": 1551185840,
+        "q": true,
+        "t": 1766671015568,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_F74_electricity_consumption",
+        "v": 30855,
+        "q": true,
+        "t": 1766671015578,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_sub-assy-key-valve_electricity_consumption",
+        "v": 28,
+        "q": true,
+        "t": 1766671015588,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_lightning-\u0026-socket-outlet_mfg3_electricity_consumption",
+        "v": 117988,
+        "q": true,
+        "t": 1766671015597,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_welding-line_F112_electricity_consumption",
+        "v": 36976,
+        "q": true,
+        "t": 1766671015608,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_F81_electricity_consumption",
+        "v": 65336,
+        "q": true,
+        "t": 1766671015618,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_welding-line_F110_electricity_consumption",
+        "v": 4340,
+        "q": true,
+        "t": 1766671015628,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_stamping-line_F122_electricity_consumption",
+        "v": 41630,
+        "q": true,
+        "t": 1766671015638,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb3_tester_te-0100_electricity_consumption",
+        "v": 425529.06,
+        "q": true,
+        "t": 1766671015648,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_sub-assy-master-cylinder;2_electricity_consumption",
+        "v": 67384,
+        "q": true,
+        "t": 1766671015658,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_sub-assy-\u0026-dih_brake-assy-as-0300_electricity_consumption",
+        "v": 3162,
+        "q": true,
+        "t": 1766671015668,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_F77_electricity_consumption",
+        "v": 3553,
+        "q": true,
+        "t": 1766671015678,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_F78_electricity_consumption",
+        "v": 109343,
+        "q": true,
+        "t": 1766671015687,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb3_tester_te-0101_electricity_consumption",
+        "v": 2534740224,
+        "q": true,
+        "t": 1766671015698,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_sub-assy-master-cylinder;1_electricity_consumption",
+        "v": 155818,
+        "q": true,
+        "t": 1766671015708,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_stamping-line_F121_electricity_consumption",
+        "v": 63592,
+        "q": true,
+        "t": 1766671015718,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_F75_electricity_consumption",
+        "v": 21932,
+        "q": true,
+        "t": 1766671015728,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_F79_electricity_consumption",
+        "v": 186138,
+        "q": true,
+        "t": 1766671015738,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb3_machining_ma-0100_electricity_consumption",
+        "v": 1186097.8,
+        "q": true,
+        "t": 1766671015748,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_washing-line_cl-0011_electricity_consumption",
+        "v": 436495,
+        "q": true,
+        "t": 1766671015759,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_sub-assy-\u0026-dih_dih-as-0401_electricity_consumption",
+        "v": 90029,
+        "q": true,
+        "t": 1766671015768,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb3_machining_ma-0103_electricity_consumption",
+        "v": 2503289994,
+        "q": true,
+        "t": 1766671015778,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_sub-assy-piston_electricity_consumption",
+        "v": 1083,
+        "q": true,
+        "t": 1766671015789,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_welding-line_F111_electricity_consumption",
+        "v": 9739,
+        "q": true,
+        "t": 1766671015798,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb3_machining_ma-0101_electricity_consumption",
+        "v": 1136971.5,
+        "q": true,
+        "t": 1766671015808,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_ed-coating-line_F118_electricity_consumption",
+        "v": 224756,
+        "q": true,
+        "t": 1766671015818,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_welding-line_F113_electricity_consumption",
+        "v": 52779,
+        "q": true,
+        "t": 1766671015830,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_F82_electricity_consumption",
+        "v": 147707,
+        "q": true,
+        "t": 1766671015838,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_washing-line_cl-0010_electricity_consumption",
+        "v": 128211,
+        "q": true,
+        "t": 1766671015848,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_welding-line_F108_electricity_consumption",
+        "v": 18787,
+        "q": true,
+        "t": 1766671015858,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_F80_electricity_consumption",
+        "v": 32109,
+        "q": true,
+        "t": 1766671015868,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_stamping-line_F119_electricity_consumption",
+        "v": 52128,
+        "q": true,
+        "t": 1766671015878,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb3_machining_ma-0102_electricity_consumption",
+        "v": 1271540069,
+        "q": true,
+        "t": 1766671015888,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_ed-coating-line_F117_electricity_consumption",
+        "v": 206121,
+        "q": true,
+        "t": 1766671015898,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_stamping-line_F120_electricity_consumption",
+        "v": 90335,
+        "q": true,
+        "t": 1766671015908,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_welding-line_F115_electricity_consumption",
+        "v": 3137,
+        "q": true,
+        "t": 1766671015918,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_welding-line_F107_electricity_consumption",
+        "v": 5257,
+        "q": true,
+        "t": 1766671015928,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_welding-line_F116_electricity_consumption",
+        "v": 2447,
+        "q": true,
+        "t": 1766671015938,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb2_bmc_F76_electricity_consumption",
+        "v": 366,
+        "q": true,
+        "t": 1766671015947,
+        "ResourcePath": "electricity/kwh"
+    },
+    {
+        "id": "mvmdb_lvmdb1_fan-building_machining_electricity_consumption",
+        "v": 114844,
+        "q": true,
+        "t": 1766671018107,
+        "ResourcePath": "electricity/kwh"
+    }
+]

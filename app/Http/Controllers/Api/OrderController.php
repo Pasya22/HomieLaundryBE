@@ -123,19 +123,33 @@ class OrderController extends Controller
     // Create new order
     public function store(Request $request)
     {
+        // Handle FormData
+        if ($request->has('data')) {
+            $jsonData = json_decode($request->input('data'), true);
+            if ($jsonData) {
+                $request->merge($jsonData);
+            }
+        }
+
         $validator = Validator::make($request->all(), [
-            'customer_id'          => 'nullable|exists:customers,id',
-            'customer'             => 'nullable|array',
-            'customer.name'        => 'required_if:customer_id,null|min:2',
-            'customer.type'        => 'required_if:customer_id,null|in:regular,member',
-            'items'                => 'required|array|min:1',
-            'items.*.service_id'   => 'required|exists:services,id',
-            'items.*.quantity'     => 'required|integer|min:1',
-            'items.*.weight'       => 'nullable|numeric|min:0.1',
-            'items.*.notes'        => 'nullable|string',
-            'order_notes'          => 'nullable|string',
-            'payment_method'       => 'required|in:cash,transfer',
-            'estimated_completion' => 'nullable|date',
+            'customer_id'                     => 'nullable|exists:customers,id',
+            'customer'                        => 'nullable|array',
+            'customer.name'                   => 'required_if:customer_id,null|min:2',
+            'customer.type'                   => 'required_if:customer_id,null|in:regular,member',
+            'items'                           => 'required|array|min:1',
+            'items.*.service_id'              => 'required|exists:services,id',
+            'items.*.quantity'                => 'required|integer|min:1',
+            'items.*.weight'                  => 'nullable|numeric|min:0.1',
+            'items.*.notes'                   => 'nullable|string',
+            'items.*.custom_items'            => 'nullable|array',
+            'items.*.custom_items.*.id'       => 'required|string',
+            'items.*.custom_items.*.name'     => 'required|string',
+            'items.*.custom_items.*.quantity' => 'required|integer|min:1',
+            'order_notes'                     => 'nullable|string',
+            'payment_method'                  => 'required|in:cash,transfer,deposit',
+            'payment_confirmation'            => 'required|in:now,later',
+            'payment_proof'                   => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'estimated_completion'            => 'nullable|date',
         ]);
 
         if ($validator->fails()) {
@@ -175,18 +189,67 @@ class OrderController extends Controller
 
                 if ($service->is_weight_based) {
                     $weight   = $item['weight'] ?? 1.0;
-                    $subtotal = $price * $weight;
+                    $quantity = 1;
+                    $subtotal = round($price * $weight, 2);
                     $totalWeight += $weight;
                 } else {
-                    $subtotal = $price * $item['quantity'];
+                    $quantity = $item['quantity'];
+                    $weight   = null;
+                    $subtotal = round($price * $quantity, 2);
                 }
 
                 $totalAmount += $subtotal;
-                $totalItems += $item['quantity'];
+
+                if (isset($item['custom_items']) && is_array($item['custom_items'])) {
+                    foreach ($item['custom_items'] as $customItem) {
+                        $totalItems += $customItem['quantity'] ?? 0;
+                    }
+                }
             }
 
-            // Handle payment status
-            $paymentStatus = $request->payment_method === 'cash' ? 'paid' : 'pending';
+            // ✅ LOGIC DEPOSIT MEMBER - Potong saldo jika bayar pakai deposit
+            $depositUsed = 0;
+            if ($request->payment_method === 'deposit') {
+                if ($customer->type !== 'member') {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Pembayaran deposit hanya untuk member',
+                    ], 400);
+                }
+
+                if ($customer->balance < $totalAmount) {
+                    DB::rollBack();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Saldo deposit tidak mencukupi. Saldo: ' . number_format($customer->balance, 0, ',', '.'),
+                    ], 400);
+                }
+
+                // Potong saldo member
+                $customer->balance -= $totalAmount;
+                $customer->save();
+                $depositUsed = $totalAmount;
+            }
+
+            // Payment status
+            $paymentStatus = $request->payment_confirmation === 'now' ? 'paid' : 'pending';
+
+            // Khusus deposit, payment status selalu paid
+
+            if ($request->payment_method === 'deposit') {
+                $paymentStatus = 'paid';
+                // Override payment_confirmation untuk deposit
+                $request->merge(['payment_confirmation' => 'now']);
+            }
+
+            // Handle payment proof upload
+            $paymentProofPath = null;
+            if ($request->hasFile('payment_proof') && $request->payment_confirmation === 'now') {
+                $file             = $request->file('payment_proof');
+                $fileName         = 'payment_proof_' . time() . '_' . $customer->id . '.' . $file->getClientOriginalExtension();
+                $paymentProofPath = $file->storeAs('payment_proofs', $fileName, 'public');
+            }
 
             // Create order
             $order = Order::create([
@@ -196,11 +259,14 @@ class OrderController extends Controller
                 'status'               => 'request',
                 'payment_status'       => $paymentStatus,
                 'payment_method'       => $request->payment_method,
+                'payment_proof'        => $paymentProofPath,
                 'total_amount'         => $totalAmount,
                 'weight'               => $totalWeight > 0 ? $totalWeight : null,
                 'total_items'          => $totalItems,
                 'notes'                => $request->order_notes,
                 'estimated_completion' => $request->estimated_completion,
+                'payment_confirmation' => $request->payment_confirmation,
+                'deposit_used'         => $depositUsed, // Tambahkan kolom ini di migration jika belum ada
             ]);
 
             // Create order items
@@ -210,41 +276,75 @@ class OrderController extends Controller
 
                 if ($service->is_weight_based) {
                     $weight   = $item['weight'] ?? 1.0;
-                    $subtotal = $price * $weight;
+                    $quantity = 1;
+                    $subtotal = round($price * $weight, 2);
                 } else {
-                    $subtotal = $price * $item['quantity'];
+                    $weight   = null;
+                    $quantity = $item['quantity'];
+                    $subtotal = round($price * $quantity, 2);
                 }
 
+                $customItemsJson = isset($item['custom_items']) && is_array($item['custom_items'])
+                    ? json_encode($item['custom_items'])
+                    : null;
+
                 OrderItem::create([
-                    'order_id'   => $order->id,
-                    'service_id' => $item['service_id'],
-                    'quantity'   => $item['quantity'],
-                    'weight'     => $service->is_weight_based ? $item['weight'] ?? 1.0 : null,
-                    'unit_price' => $price,
-                    'subtotal'   => $subtotal,
-                    'notes'      => $item['notes'] ?? '',
+                    'order_id'     => $order->id,
+                    'service_id'   => $item['service_id'],
+                    'quantity'     => $quantity,
+                    'weight'       => $weight,
+                    'unit_price'   => $price,
+                    'subtotal'     => $subtotal,
+                    'notes'        => $item['notes'] ?? '',
+                    'custom_items' => $customItemsJson,
                 ]);
+            }
+
+            // ✅ TAMBAH DEPOSIT - Hanya jika cash payment dan ada deposit input
+            if ($customer->type === 'member'
+                && $request->payment_method === 'cash'
+                && $request->payment_confirmation === 'now'
+                && isset($request->customer['deposit'])
+                && $request->customer['deposit'] > 0) {
+                $customer->balance += $request->customer['deposit'];
+                $customer->save();
             }
 
             DB::commit();
 
-            // Send WhatsApp notification
-            try {
-                $whatsappService = new WhatsAppService();
-                $whatsappService->sendInvoice($order);
-            } catch (\Exception $e) {
-                Log::error('WhatsApp error: ' . $e->getMessage());
+            Log::info('Order created successfully', [
+                'order_id'         => $order->id,
+                'order_number'     => $order->order_number,
+                'total_amount'     => $totalAmount,
+                'payment_method'   => $request->payment_method,
+                'deposit_used'     => $depositUsed,
+                'customer_balance' => $customer->balance,
+            ]);
+
+            $message = 'Order berhasil dibuat!';
+
+            if ($depositUsed > 0) {
+                $message = '✅ HL-OK! Pembayaran via deposit berhasil diproses. Saldo terpotong: Rp ' .
+                number_format($depositUsed, 0, ',', '.') .
+                    '. Status: LUNAS';
+            } elseif ($request->payment_confirmation === 'now') {
+                $message .= ' Pembayaran telah dikonfirmasi.';
+            } else {
+                $message .= ' Menunggu konfirmasi pembayaran.';
             }
 
             return response()->json([
                 'success' => true,
                 'data'    => $order->load(['customer', 'orderItems.service']),
-                'message' => 'Order berhasil dibuat!',
+                'message' => 'Order berhasil dibuat!' .
+                ($depositUsed > 0 ? ' Saldo deposit terpotong: Rp ' . number_format($depositUsed, 0, ',', '.') : ''),
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Create order error: ' . $e->getMessage());
+            Log::error('Create order error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
 
             return response()->json([
                 'success' => false,
@@ -315,6 +415,7 @@ class OrderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'payment_status' => 'required|in:paid,pending',
+            'payment_proof'  => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120', // Max 5MB
         ]);
 
         if ($validator->fails()) {
@@ -325,19 +426,116 @@ class OrderController extends Controller
         }
 
         try {
-            $order = Order::findOrFail($id);
-            $order->update(['payment_status' => $request->payment_status]);
+            $order = Order::with('customer')->findOrFail($id);
+
+                                                       // Handle payment proof upload
+            $paymentProofPath = $order->payment_proof; // Keep existing if not uploading new
+
+            if ($request->hasFile('payment_proof')) {
+                // Delete old payment proof if exists
+                if ($order->payment_proof && Storage::disk('public')->exists($order->payment_proof)) {
+                    Storage::disk('public')->delete($order->payment_proof);
+                }
+
+                // Upload new payment proof
+                $file             = $request->file('payment_proof');
+                $fileName         = 'payment_proof_' . $order->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $paymentProofPath = $file->storeAs('payment_proofs', $fileName, 'public');
+
+                Log::info('Payment proof uploaded', [
+                    'order_id'  => $order->id,
+                    'file_name' => $fileName,
+                    'file_path' => $paymentProofPath,
+                ]);
+            }
+
+            // Update order
+            $order->update([
+                'payment_status' => $request->payment_status,
+                'payment_proof'  => $paymentProofPath,
+                'paid_at'        => $request->payment_status === 'paid' ? now() : null,
+            ]);
+
+            Log::info('Payment status updated', [
+                'order_id'       => $order->id,
+                'payment_status' => $request->payment_status,
+                'has_proof'      => ! empty($paymentProofPath),
+            ]);
 
             return response()->json([
                 'success' => true,
-                'data'    => $order,
-                'message' => 'Status pembayaran berhasil diperbarui',
+                'data'    => $order->load(['customer', 'orderItems.service']),
+                'message' => 'Status pembayaran berhasil diperbarui' .
+                ($paymentProofPath ? ' dengan bukti pembayaran' : ''),
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Update payment status error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui status pembayaran: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+// Get payment proof URL
+    public function getPaymentProof($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+
+            if (! $order->payment_proof) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bukti pembayaran tidak tersedia',
+                ], 404);
+            }
+
+            // Generate URL untuk akses file
+            $url = Storage::disk('public')->url($order->payment_proof);
+
+            return response()->json([
+                'success' => true,
+                'data'    => [
+                    'url'       => $url,
+                    'file_path' => $order->payment_proof,
+                    'file_name' => basename($order->payment_proof),
+                ],
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal memperbarui status pembayaran: ' . $e->getMessage(),
+                'message' => 'Gagal mengambil bukti pembayaran: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+// Download payment proof
+    public function downloadPaymentProof($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+
+            if (! $order->payment_proof || ! Storage::disk('public')->exists($order->payment_proof)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bukti pembayaran tidak ditemukan',
+                ], 404);
+            }
+
+            return Storage::disk('public')->download(
+                $order->payment_proof,
+                'payment_proof_' . $order->order_number . '.' . pathinfo($order->payment_proof, PATHINFO_EXTENSION)
+            );
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengunduh bukti pembayaran: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -347,11 +545,20 @@ class OrderController extends Controller
     {
         try {
             $order = Order::findOrFail($id);
+
+            // ✅ Kembalikan deposit jika order dibatalkan dan menggunakan deposit
+            if ($order->payment_method === 'deposit' && $order->deposit_used > 0) {
+                $customer = $order->customer;
+                $customer->balance += $order->deposit_used;
+                $customer->save();
+            }
+
             $order->delete();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Order berhasil dihapus',
+                'message' => 'Order berhasil dihapus' .
+                ($order->deposit_used > 0 ? ' dan deposit dikembalikan' : ''),
             ]);
 
         } catch (\Exception $e) {
@@ -368,7 +575,7 @@ class OrderController extends Controller
         $query = Customer::query();
 
         if ($request->search) {
-            $search = strtolower($request->search); // Konversi ke lowercase
+            $search = strtolower($request->search);
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
                     ->orWhereRaw('LOWER(phone) LIKE ?', ["%{$search}%"]);
@@ -382,6 +589,7 @@ class OrderController extends Controller
             'data'    => $customers,
         ]);
     }
+
     // Get active services
     public function getServices()
     {

@@ -42,7 +42,9 @@ Route::prefix('orders')->group(function () {
     Route::post('/', [OrderController::class, 'store']);
     Route::get('/{id}', [OrderController::class, 'show']);
     Route::patch('/{id}/status', [OrderController::class, 'updateStatus']);
-    Route::patch('/{id}/payment', [OrderController::class, 'updatePaymentStatus']);
+    Route::get('/{id}/payment-proof', [OrderController::class, 'getPaymentProof']);
+    Route::get('/{id}/payment-proof/download', [OrderController::class, 'downloadPaymentProof']);
+    Route::post('/{id}/payment-status', [OrderController::class, 'updatePaymentStatus']);
     Route::delete('/{id}', [OrderController::class, 'destroy']);
 });
 

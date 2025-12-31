@@ -3,10 +3,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Customer;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CustomerResource;
+use App\Models\Customer;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
@@ -17,14 +17,14 @@ class CustomerController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhere('address', 'like', "%{$search}%");
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('address', 'like', "%{$search}%");
             });
         }
 
-        $perPage = $request->per_page ?? 10;
+        $perPage   = $request->per_page ?? 10;
         $customers = $query->latest()->paginate($perPage);
 
         return CustomerResource::collection($customers);
@@ -33,40 +33,43 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|min:2|max:100',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:255',
-            'type' => 'required|in:regular,member',
-            'deposit' => 'required_if:type,member|numeric|min:0'
+            'name'          => 'required|min:2|max:100',
+            'phone'         => 'nullable|string|max:20',
+            'address'       => 'nullable|string|max:255',
+            'type'          => 'required|in:regular,member',
+            'deposit'       => 'required_if:type,member|numeric|min:0',
+            'member_expiry' => 'nullable|date|after:today',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors'  => $validator->errors(),
             ], 422);
         }
 
         $customerData = [
-            'name' => $request->name,
-            'phone' => $request->phone,
+            'name'    => $request->name,
+            'phone'   => $request->phone,
             'address' => $request->address,
-            'type' => $request->type,
+            'type'    => $request->type,
         ];
 
         if ($request->type === 'member') {
-            $customerData['deposit'] = $request->deposit;
-            $customerData['balance'] = $request->deposit;
+            $customerData['deposit']      = $request->deposit;
+            $customerData['balance']      = $request->deposit;
             $customerData['member_since'] = now();
-            $customerData['member_expiry'] = now()->addYear();
-        }
 
+            $customerData['member_expiry'] = $request->member_expiry
+                ? \Carbon\Carbon::parse($request->member_expiry)
+                : now()->addYear();
+        }
         $customer = Customer::create($customerData);
 
         return response()->json([
             'success' => true,
             'message' => 'Customer berhasil ditambahkan',
-            'data' => new CustomerResource($customer)
+            'data'    => new CustomerResource($customer),
         ], 201);
     }
 
@@ -81,38 +84,44 @@ class CustomerController extends Controller
         $customer = Customer::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|min:2|max:100',
-            'phone' => 'nullable|string|max:20',
+            'name'    => 'required|min:2|max:100',
+            'phone'   => 'nullable|string|max:20',
             'address' => 'nullable|string|max:255',
-            'type' => 'required|in:regular,member',
-            'deposit' => 'required_if:type,member|numeric|min:0'
+            'type'    => 'required|in:regular,member',
+            'deposit' => 'required_if:type,member|numeric|min:0',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors'  => $validator->errors(),
             ], 422);
         }
 
         $customerData = [
-            'name' => $request->name,
-            'phone' => $request->phone,
+            'name'    => $request->name,
+            'phone'   => $request->phone,
             'address' => $request->address,
-            'type' => $request->type,
+            'type'    => $request->type,
         ];
 
         if ($request->type === 'member') {
             $customerData['deposit'] = $request->deposit;
+
             if ($customer->deposit != $request->deposit) {
                 $customerData['balance'] = $request->deposit;
             }
-            $customerData['member_since'] = $customer->member_since ?: now();
-            $customerData['member_expiry'] = $customer->member_expiry ?: now()->addYear();
+
+            // jangan overwrite kalau tidak dikirim
+            if ($request->filled('member_expiry')) {
+                $customerData['member_expiry'] = \Carbon\Carbon::parse($request->member_expiry);
+            }
+
+            $customerData['member_since'] = $customer->member_since ?? now();
         } else {
-            $customerData['deposit'] = 0;
-            $customerData['balance'] = 0;
-            $customerData['member_since'] = null;
+            $customerData['deposit']       = 0;
+            $customerData['balance']       = 0;
+            $customerData['member_since']  = null;
             $customerData['member_expiry'] = null;
         }
 
@@ -121,7 +130,7 @@ class CustomerController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Customer berhasil diupdate',
-            'data' => new CustomerResource($customer)
+            'data'    => new CustomerResource($customer),
         ]);
     }
 
@@ -132,7 +141,7 @@ class CustomerController extends Controller
         if ($customer->orders()->exists()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tidak bisa hapus customer yang sudah memiliki order'
+                'message' => 'Tidak bisa hapus customer yang sudah memiliki order',
             ], 400);
         }
 
@@ -140,7 +149,7 @@ class CustomerController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Customer berhasil dihapus'
+            'message' => 'Customer berhasil dihapus',
         ]);
     }
 }
